@@ -1,3 +1,4 @@
+// src/App.jsx
 import { useEffect, useState } from "react";
 import { Routes, Route, NavLink } from "react-router-dom";
 import Present from "./pages/Present";
@@ -7,21 +8,45 @@ import { load, save } from "./utils/storage";
 
 const linkBase = "px-3 py-2 rounded-lg text-sm font-medium transition";
 const linkClass = ({ isActive }) =>
-  isActive ? `${linkBase} bg-gray-900 text-white` : `${linkBase} text-gray-700 hover:bg-gray-200`;
+  isActive
+    ? `${linkBase} bg-gray-900 text-white`
+    : `${linkBase} text-gray-700 hover:bg-gray-200`;
 
 export default function App() {
-  const [score, setScore] = useState(() => load("totalScore", { correct: 0, total: 0 }));
+  // Initialize score from localStorage; always keep numbers
+  const [score, setScore] = useState(() =>
+    load("totalScore", { correct: 0, total: 0 })
+  );
 
+  // Called by child pages after "Check"
   function handleRoundScore(correct, total) {
-    setScore(s => ({ correct: s.correct + correct, total: s.total + total }));
-  }
-  function resetScore() {
-    setScore({ correct: 0, total: 0 });
+    setScore((prev) => {
+      const p =
+        prev && Number.isFinite(prev.correct) && Number.isFinite(prev.total)
+          ? prev
+          : { correct: 0, total: 0 };
+      return {
+        correct: p.correct + Number(correct || 0),
+        total: p.total + Number(total || 0),
+      };
+    });
   }
 
+  function resetScore() {
+    const zero = { correct: 0, total: 0 };
+    setScore(zero);
+    save("totalScore", zero);
+  }
+
+  // Persist whenever it changes
   useEffect(() => {
     save("totalScore", score);
   }, [score]);
+
+  const pct =
+    score && score.total > 0
+      ? ` (${Math.round((score.correct / score.total) * 100)}%)`
+      : "";
 
   return (
     <main className="min-h-screen">
@@ -30,10 +55,10 @@ export default function App() {
           <div>
             <h1 className="text-lg font-semibold">Spanish Tenses Practice</h1>
             <p className="text-xs text-gray-600">
-              Total score: <span className="font-medium">{score.correct}</span> / {score.total}
-              {score.total > 0 && (
-                <span> ({Math.round((score.correct / score.total) * 100)}%)</span>
-              )}
+              Total score:{" "}
+              <span className="font-medium">{score?.correct ?? 0}</span> /{" "}
+              {score?.total ?? 0}
+              {pct}
               <button
                 onClick={resetScore}
                 className="ml-3 text-xs px-2 py-1 rounded bg-gray-200 hover:bg-gray-300"
@@ -44,16 +69,29 @@ export default function App() {
           </div>
 
           <nav className="flex gap-2">
-            <NavLink to="/present" className={linkClass}>Presente</NavLink>
-            <NavLink to="/past" className={linkClass}>Pretérito</NavLink>
-            <NavLink to="/future" className={linkClass}>Futuro</NavLink>
+            <NavLink to="/present" className={linkClass}>
+              Presente
+            </NavLink>
+            <NavLink to="/past" className={linkClass}>
+              Pretérito
+            </NavLink>
+            <NavLink to="/future" className={linkClass}>
+              Futuro
+            </NavLink>
           </nav>
         </div>
       </header>
 
       <div className="max-w-3xl mx-auto px-4 py-6">
         <Routes>
-          <Route path="/" element={<p className="text-sm text-gray-600">Choose a tense above to practice.</p>} />
+          <Route
+            path="/"
+            element={
+              <p className="text-sm text-gray-600">
+                Choose a tense above to practice.
+              </p>
+            }
+          />
           <Route path="/present" element={<Present onRoundScore={handleRoundScore} />} />
           <Route path="/past" element={<Past onRoundScore={handleRoundScore} />} />
           <Route path="/future" element={<Future onRoundScore={handleRoundScore} />} />
