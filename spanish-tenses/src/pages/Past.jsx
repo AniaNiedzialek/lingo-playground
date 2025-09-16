@@ -5,10 +5,22 @@ import AccentPad from "../components/AccentPad";
 /* ---------- Tabs ---------- */
 const MODES = [
   { key: "indefinido", label: "Pretérito indefinido" },
-  { key: "compuesto",  label: "Pretérito compuesto" },
+  { key: "imperfecto", label: "Pretérito imperfecto" },
 ];
 
-/* ---------- Indefinido data ---------- */
+/* ---------- Shared ---------- */
+const PERSONS = [
+  { key: "yo", label: "yo" },
+  { key: "tú", label: "tú" },
+  { key: "él", label: "él/ella/usted" },
+  { key: "nos", label: "nosotros" },
+  { key: "vos", label: "vosotros" },
+  { key: "ellos", label: "ellos/ellas/ustedes" },
+];
+const rndNext = (max, avoid) =>
+  max <= 1 ? 0 : ((avoid + 1 + Math.floor(Math.random() * (max - 1))) % max);
+
+/* ---------- Indefinido (simple past) ---------- */
 // Regular samples + several irregulars (full forms)
 const INDEFINIDO_VERBS = [
   // regular examples
@@ -19,113 +31,107 @@ const INDEFINIDO_VERBS = [
   { infinitive: "aprender", type: "er" },
 
   // irregulars (full conjugations)
-  { infinitive: "ir", type: "irregular", irregular: {
+  { infinitive: "ir", irregular: {
       preterite: { yo:"fui", tú:"fuiste", él:"fue", nos:"fuimos", vos:"fuisteis", ellos:"fueron" }
     }
   },
-  { infinitive: "ser", type: "irregular", irregular: {
+  { infinitive: "ser", irregular: {
       preterite: { yo:"fui", tú:"fuiste", él:"fue", nos:"fuimos", vos:"fuisteis", ellos:"fueron" }
     }
   },
-  { infinitive: "tener", type: "irregular", irregular: {
+  { infinitive: "tener", irregular: {
       preterite: { yo:"tuve", tú:"tuviste", él:"tuvo", nos:"tuvimos", vos:"tuvisteis", ellos:"tuvieron" }
     }
   },
-  { infinitive: "estar", type: "irregular", irregular: {
+  { infinitive: "estar", irregular: {
       preterite: { yo:"estuve", tú:"estuviste", él:"estuvo", nos:"estuvimos", vos:"estuvisteis", ellos:"estuvieron" }
     }
   },
-  { infinitive: "poder", type: "irregular", irregular: {
+  { infinitive: "poder", irregular: {
       preterite: { yo:"pude", tú:"pudiste", él:"pudo", nos:"pudimos", vos:"pudisteis", ellos:"pudieron" }
     }
   },
-  { infinitive: "poner", type: "irregular", irregular: {
+  { infinitive: "poner", irregular: {
       preterite: { yo:"puse", tú:"pusiste", él:"puso", nos:"pusimos", vos:"pusisteis", ellos:"pusieron" }
     }
   },
-  { infinitive: "venir", type: "irregular", irregular: {
+  { infinitive: "venir", irregular: {
       preterite: { yo:"vine", tú:"viniste", él:"vino", nos:"vinimos", vos:"vinisteis", ellos:"vinieron" }
     }
   },
-  { infinitive: "decir", type: "irregular", irregular: {
+  { infinitive: "decir", irregular: {
       preterite: { yo:"dije", tú:"dijiste", él:"dijo", nos:"dijimos", vos:"dijisteis", ellos:"dijeron" } // -eron
     }
   },
-  { infinitive: "traer", type: "irregular", irregular: {
+  { infinitive: "traer", irregular: {
       preterite: { yo:"traje", tú:"trajiste", él:"trajo", nos:"trajimos", vos:"trajisteis", ellos:"trajeron" } // -eron
     }
   },
-  { infinitive: "hacer", type: "irregular", irregular: {
+  { infinitive: "hacer", irregular: {
       preterite: { yo:"hice", tú:"hiciste", él:"hizo", nos:"hicimos", vos:"hicisteis", ellos:"hicieron" }
     }
   },
 ];
 
-// Regular endings for indefinido
 function conjugateIndefinido(verb) {
   const persons = ["yo","tú","él","nos","vos","ellos"];
   if (verb.irregular?.preterite) return verb.irregular.preterite;
-
   const stem = verb.infinitive.slice(0, -2);
   const ends = verb.type === "ar"
     ? ["é","aste","ó","amos","asteis","aron"]
-    : ["í","iste","ió","imos","isteis","ieron"];
+    : ["í","iste","ió","imos","isteis","ieron"]; // -er / -ir
   const out = {};
   persons.forEach((p,i)=> out[p] = stem + ends[i]);
   return out;
 }
 
-/* ---------- Compuesto data ---------- */
-// "haber" (presente) + participio
-const HABER_PRESENTE = {
-  yo:"he", tú:"has", él:"ha", nos:"hemos", vos:"habéis", ellos:"han"
-};
-// irregular participles
-const IRREG_PARTICIPLES = {
-  "hacer":"hecho", "decir":"dicho", "ver":"visto", "poner":"puesto",
-  "escribir":"escrito", "abrir":"abierto", "romper":"roto",
-  "volver":"vuelto", "morir":"muerto", "freír":"frito"
-};
+/* ---------- Imperfecto ---------- */
+// Regular: -ar → aba, abas, aba, ábamos, abais, aban
+//          -er/-ir → ía, ías, ía, íamos, íais, ían
+// Irregular only 3 verbs: ser, ir, ver
+const IMPERFECTO_VERBS = [
+  // regular examples
+  { infinitive: "hablar", type: "ar" },
+  { infinitive: "comer",  type: "er" },
+  { infinitive: "vivir",  type: "ir" },
+  { infinitive: "trabajar", type: "ar" },
+  { infinitive: "escribir", type: "ir" },
 
-// pool of infinitives (regular + some with irregular participles)
-const COMPUESTO_VERBS = [
-  "hablar","comer","vivir","mirar","aprender","trabajar","estudiar",
-  "hacer","decir","ver","poner","escribir","abrir","romper","volver","morir","freír"
-].map(inf => ({ infinitive: inf }));
+  // irregular 3
+  { infinitive: "ser", irregular: {
+      imperfecto: { yo:"era", tú:"eras", él:"era", nos:"éramos", vos:"erais", ellos:"eran" }
+    }
+  },
+  { infinitive: "ir", irregular: {
+      imperfecto: { yo:"iba", tú:"ibas", él:"iba", nos:"íbamos", vos:"ibais", ellos:"iban" }
+    }
+  },
+  { infinitive: "ver", irregular: {
+      imperfecto: { yo:"veía", tú:"veías", él:"veía", nos:"veíamos", vos:"veíais", ellos:"veían" }
+    }
+  },
+];
 
-function participleFor(inf) {
-  if (IRREG_PARTICIPLES[inf]) return IRREG_PARTICIPLES[inf];
-  const base = inf.slice(0, -2);
-  const type = inf.slice(-2);
-  if (type === "ar") return base + "ado";
-  // -er / -ir
-  return base + "ido";
-}
-
-function conjugateCompuesto(verb) {
+function conjugateImperfecto(verb) {
   const persons = ["yo","tú","él","nos","vos","ellos"];
-  const part = participleFor(verb.infinitive);
+  if (verb.irregular?.imperfecto) return verb.irregular.imperfecto;
+
+  const stem = verb.infinitive.slice(0, -2);
+  const type = verb.type ?? verb.infinitive.slice(-2);
+  const ends = type === "ar"
+    ? ["aba","abas","aba","ábamos","abais","aban"]
+    : ["ía","ías","ía","íamos","íais","ían"]; // -er / -ir
   const out = {};
-  persons.forEach(p => out[p] = `${HABER_PRESENTE[p]} ${part}`);
+  persons.forEach((p,i)=> out[p] = stem + ends[i]);
   return out;
 }
 
-/* ---------- Shared ---------- */
-const PERSONS = [
-  { key:"yo",label:"yo" },
-  { key:"tú",label:"tú" },
-  { key:"él",label:"él/ella/usted" },
-  { key:"nos",label:"nosotros" },
-  { key:"vos",label:"vosotros" },
-  { key:"ellos",label:"ellos/ellas/ustedes" },
-];
-
-const rndNext = (max, avoid) =>
-  max <= 1 ? 0 : ((avoid + 1 + Math.floor(Math.random() * (max - 1))) % max);
-
+/* ---------- Component ---------- */
 export default function Past({ onRoundScore }) {
   const [mode, setMode] = useState("indefinido");
-  const [filter, setFilter] = useState("all"); // indefinido: all | regular | irregular
+  // filters per mode
+  const [filterIndef, setFilterIndef] = useState("all");       // all | regular | irregular
+  const [filterImperf, setFilterImperf] = useState("all");     // all | regular | irregular
 
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -142,27 +148,31 @@ export default function Past({ onRoundScore }) {
     setIdx(0);
   }
 
-  /* ----- pools ----- */
+  /* ----- pools per mode ----- */
   const indefPool = useMemo(() => {
-    if (filter === "regular")   return INDEFINIDO_VERBS.filter(v => !v.irregular);
-    if (filter === "irregular") return INDEFINIDO_VERBS.filter(v =>  v.irregular);
+    if (filterIndef === "regular")   return INDEFINIDO_VERBS.filter(v => !v.irregular);
+    if (filterIndef === "irregular") return INDEFINIDO_VERBS.filter(v =>  v.irregular);
     return INDEFINIDO_VERBS;
-  }, [filter]);
+  }, [filterIndef]);
 
-  const compPool = COMPUESTO_VERBS;
+  const imperfPool = useMemo(() => {
+    if (filterImperf === "regular")   return IMPERFECTO_VERBS.filter(v => !v.irregular);
+    if (filterImperf === "irregular") return IMPERFECTO_VERBS.filter(v =>  v.irregular);
+    return IMPERFECTO_VERBS;
+  }, [filterImperf]);
 
-  /* ----- item ----- */
+  /* ----- current item ----- */
   const item = useMemo(() => {
     if (mode === "indefinido") {
       const v = indefPool[idx % indefPool.length];
       return v ? { verb: v.infinitive, forms: conjugateIndefinido(v) } : null;
     }
-    if (mode === "compuesto") {
-      const v = compPool[idx % compPool.length];
-      return v ? { verb: v.infinitive, forms: conjugateCompuesto(v) } : null;
+    if (mode === "imperfecto") {
+      const v = imperfPool[idx % imperfPool.length];
+      return v ? { verb: v.infinitive, forms: conjugateImperfecto(v) } : null;
     }
     return null;
-  }, [mode, idx, indefPool, compPool]);
+  }, [mode, idx, indefPool, imperfPool]);
 
   /* ----- actions ----- */
   function setAnswer(k, v) { setAnswers(a => ({ ...a, [k]: v })); }
@@ -181,7 +191,7 @@ export default function Past({ onRoundScore }) {
     setAnswers({});
     setChecked(false);
     setLastScore(null);
-    const len = mode === "indefinido" ? indefPool.length : compPool.length;
+    const len = mode === "indefinido" ? indefPool.length : imperfPool.length;
     setIdx(i => rndNext(len, i));
   }
 
@@ -205,7 +215,7 @@ export default function Past({ onRoundScore }) {
     }
   }
 
-  /* ----- UI ----- */
+  /* ---------- UI ---------- */
   return (
     <section className="max-w-3xl">
       {/* Tabs */}
@@ -224,7 +234,7 @@ export default function Past({ onRoundScore }) {
         ))}
       </div>
 
-      {/* HEADERS / CONTROLS */}
+      {/* Headers / controls */}
       {mode === "indefinido" ? (
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -242,8 +252,8 @@ export default function Past({ onRoundScore }) {
 
           <div className="flex gap-2">
             <select
-              value={filter}
-              onChange={(e)=>{ setFilter(e.target.value); resetRoundState(); }}
+              value={filterIndef}
+              onChange={(e)=>{ setFilterIndef(e.target.value); resetRoundState(); }}
               className="h-9 px-3 rounded-lg border bg-white text-sm"
               title="Choose verb set"
             >
@@ -263,25 +273,38 @@ export default function Past({ onRoundScore }) {
       ) : (
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-2xl font-semibold">Pretérito — Compuesto</h2>
+            <h2 className="text-2xl font-semibold">Pretérito — Imperfecto</h2>
             {item && (
               <p className="mt-1 text-gray-700">
                 Verb: <span className="font-medium">{item.verb}</span>
               </p>
             )}
             <p className="mt-1 text-xs text-gray-500">
-              Pattern: <em>haber</em> (presente) + participio. Ej.:{" "}
-              <em>he hablado, has comido, ha vivido</em>. Irregulares:{" "}
-              <em>hecho, dicho, visto, puesto, escrito, abierto, roto, vuelto, muerto, frito…</em>
+              Regular endings: <code>-ar → aba, abas, aba, ábamos, abais, aban</code> ·{" "}
+              <code>-er/-ir → ía, ías, ía, íamos, íais, ían</code>. Irregulars:{" "}
+              <em>ser: era/eras/…</em>, <em>ir: iba/ibas/…</em>, <em>ver: veía/veías/…</em>.
             </p>
           </div>
 
-          <button
-            onClick={() => setShowAccents(s => !s)}
-            className="h-9 px-3 rounded-lg border bg-white hover:bg-gray-100 text-sm whitespace-nowrap"
-          >
-            {showAccents ? "Hide accents" : "Show accents"}
-          </button>
+          <div className="flex gap-2">
+            <select
+              value={filterImperf}
+              onChange={(e)=>{ setFilterImperf(e.target.value); resetRoundState(); }}
+              className="h-9 px-3 rounded-lg border bg-white text-sm"
+              title="Choose verb set"
+            >
+              <option value="all">All verbs</option>
+              <option value="regular">Regular only</option>
+              <option value="irregular">Irregular only</option>
+            </select>
+
+            <button
+              onClick={() => setShowAccents(s => !s)}
+              className="h-9 px-3 rounded-lg border bg-white hover:bg-gray-100 text-sm whitespace-nowrap"
+            >
+              {showAccents ? "Hide accents" : "Show accents"}
+            </button>
+          </div>
         </div>
       )}
 
