@@ -49,7 +49,8 @@ export default function App() {
       : "";
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen relative bg-gray-50">
+      <div className="pointer-events-none abolsute inset-0 bg-animate opacity-70" />
       <header className="border-b bg-white">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>

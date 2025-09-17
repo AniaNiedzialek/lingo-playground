@@ -2,3 +2,16 @@
 
 :root { color-scheme: light; }
 body { @apply bg-gray-50 text-gray-900; }
+
+/* animated background */
+.bg-animate {
+  background: radial-gradient(1200px 800px at 10% 10%, rgba(37,99,235,0.10), transparent 40%),
+              radial-gradient(1000px 700px at 90% 20%, rgba(245,158,11,0.12), transparent 45%),
+              radial-gradient(900px 600px at 50% 90%, rgba(16,185,129,0.10), transparent 40%);
+  animation: floatBg 24s ease-in-out infinite alternate;
+}
+
+@keyframes floatBg {
+  0%   { background-position: 0% 0%, 100% 20%, 50% 100%; }
+  100% { background-position: 20% 10%, 80% 30%, 40% 85%; }
+}

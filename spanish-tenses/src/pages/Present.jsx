@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import AccentPad from "../components/AccentPad";
+import { busrtConfetti } from "../utils/celebrate";
 
 const VERBS = [
   { infinitive: "hablar", type: "ar" },
@@ -56,6 +57,9 @@ export default function Present({ onRoundScore }) {
     setLastScore(`${correct}/${PERSONS.length}`);
     setChecked(true);
     onRoundScore?.(correct, PERSONS.length); // report up to App
+    if (correct === PERSONS.length) {
+      busrtConfetti();
+    }
   }
 
   function next(){ setAnswers({}); setChecked(false); setIdx(i=>rndNext(VERBS.length,i)); setLastScore(null); }
