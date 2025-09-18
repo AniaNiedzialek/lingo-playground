@@ -132,6 +132,7 @@ export default function Past({ onRoundScore }) {
   // filters per mode
   const [filterIndef, setFilterIndef] = useState("all");       // all | regular | irregular
   const [filterImperf, setFilterImperf] = useState("all");     // all | regular | irregular
+  const [showRules, setShowRules] = useState(false);
 
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState({});
@@ -244,10 +245,31 @@ export default function Past({ onRoundScore }) {
                 Verb: <span className="font-medium">{item.verb}</span>
               </p>
             )}
-            <p className="mt-1 text-xs text-gray-500">
-              Regular endings: <code>-ar → é, aste, ó, amos, asteis, aron</code> ·{" "}
-              <code>-er/-ir → í, iste, ió, imos, isteis, ieron</code>. Irregulars use special forms.
-            </p>
+            <div className="mt-2">
+                <button
+                  onClick={() => setShowRules((s) => !s)}
+                  className="px-3 py-1 rounded bg-orange-100 text-orange-800 hover:bg-orange-300 text-xs"
+                >
+                  {showRules ? "Hide rules" : "Show rules"}
+                </button>
+
+                {showRules && (
+                  <div className="mt-2 p-3 rounded border bg-orange-50 text-xs leading-relaxed">
+                    <p>
+                      <strong>Rule (regular -ar):</strong>{" "}
+                      <code>-é, -aste, -ó, -amos, -asteis, -aron</code>
+                    </p>
+                    <p className="mt-1">
+                      <strong>Rule (regular -er / -ir):</strong>{" "}
+                      <code>-í, -iste, -ió, -imos, -isteis, -ieron</code>
+                    </p>
+                    <p className="mt-1">
+                      Many verbs are irregular with special stems (e.g.,{" "}
+                      <em>tener → tuve, estar → estuve, decir → dije</em>).
+                    </p>
+                  </div>
+                )}
+              </div>
           </div>
 
           <div className="flex gap-2">
@@ -279,11 +301,25 @@ export default function Past({ onRoundScore }) {
                 Verb: <span className="font-medium">{item.verb}</span>
               </p>
             )}
-            <p className="mt-1 text-xs text-gray-500">
-              Regular endings: <code>-ar → aba, abas, aba, ábamos, abais, aban</code> ·{" "}
-              <code>-er/-ir → ía, ías, ía, íamos, íais, ían</code>. Irregulars:{" "}
-              <em>ser: era/eras/…</em>, <em>ir: iba/ibas/…</em>, <em>ver: veía/veías/…</em>.
-            </p>
+              <div className="mt-2">
+                <button
+                  onClick={() => setShowRules((s) => !s)}
+                  className="px-3 py-1 rounded bg-orange-100 text-orange-800 hover:bg-orange-200 text-xs"
+                >
+                  {showRules ? "Hide rules" : "Show rules"}
+                </button>
+
+                {showRules && (
+                  <div className="mt-2 p-3 rounded border bg-orange-50 text-xs leading-relaxed">
+                    <p className="mt-1 text-xs text-gray-500">
+                      Regular endings: <code>-ar → aba, abas, aba, ábamos, abais, aban</code> ·{" "}
+                      <code>-er/-ir → ía, ías, ía, íamos, íais, ían</code>. Irregulars:{" "}
+                      <em>ser: era/eras/…</em>, <em>ir: iba/ibas/…</em>, <em>ver: veía/veías/…</em>.
+                    </p>
+                  </div>
+                )}
+              </div>
+
           </div>
 
           <div className="flex gap-2">

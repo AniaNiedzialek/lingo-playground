@@ -80,7 +80,7 @@ const rndNext = (max, avoid) =>
 export default function Future({ onRoundScore }) {
   const [mode, setMode] = useState("simple");
   const [filter, setFilter] = useState("all"); // simple-only: all | regular | irregular
-
+  const [showRules, setShowRules] = useState(false)
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState({});
   const [checked, setChecked] = useState(false);
@@ -192,6 +192,7 @@ export default function Future({ onRoundScore }) {
       {/* SIMPLE */}
       {mode === "simple" && (
         <>
+    
           <div className="flex items-start justify-between gap-3">
             <div>
               <h2 className="text-2xl font-semibold">Futuro — Simple</h2>
@@ -200,11 +201,29 @@ export default function Future({ onRoundScore }) {
                   Verb: <span className="font-medium">{item.verb}</span>
                 </p>
               )}
-              <p className="mt-1 text-xs text-gray-500">
-                Rule: <code>infinitive</code> + <code>é, ás, á, emos, éis, án</code>.
-                Irregulars use special stems (<em>tendr-, dir-, sabr-, …</em>).
-              </p>
+              <div className="mt-2">
+                <button
+                  onClick={() => setShowRules((s) => !s)}
+                  className="px-3 py-1 rounded bg-orange-100 text-orange-800 hover:bg-orange-300 text-xs"
+                >
+                  {showRules ? "Hide rules" : "Show rules"}
+                </button>
+
+                {showRules && (
+                  <div className="mt-2 p-3 rounded border bg-orange-50 text-xs leading-relaxed">
+                    <p>
+                      <strong>Rule:</strong> <code>infinitive</code> + <em>é, ás, á, emos, éis, án</em>.
+                    </p>
+                    <p className="mt-1">
+                      Irregulars use special stems (<em>tendr-, dir-, sabr-, …</em>).
+                    </p>
+                  </div>
+                )}
+              </div>
+
+
             </div>
+
 
             <div className="flex gap-2">
               <select
@@ -261,10 +280,31 @@ export default function Future({ onRoundScore }) {
                   Verb: <span className="font-medium">{item.verb}</span>
                 </p>
               )}
-              <p className="mt-1 text-xs text-gray-500">
-                Pattern: <em>voy/vas/va/vamos/vais/van</em> + <code>a</code> + infinitive
-                (e.g., <em>voy a estudiar</em>).
-              </p>
+              <div className="mt-2">
+                <button
+                  onClick={() => setShowRules((s) => !s)}
+                  className="px-3 py-1 rounded bg-orange-100 text-orange-800 hover:bg-orange-300 text-xs"
+                >
+                  {showRules ? "Hide rules" : "Show rules"}
+                </button>
+
+                {showRules && (
+                  <div className="mt-2 p-3 rounded border bg-orange-50 text-xs leading-relaxed">
+                    <p>
+                      <strong>Rule:</strong> <em>voy/vas/va/vamos/vais/van</em> + <code>a</code> + infinitive
+                      (e.g., <em>voy a estudiar</em>).
+                    </p>
+                   
+                  </div>
+                )}
+              </div>
+                    {/* <p className="mt-1 text-xs text-gray-500">
+                      <strong>Rule:</strong><em>voy/vas/va/vamos/vais/van</em> + <code>a</code> + infinitive
+                      (e.g., <em>voy a estudiar</em>).
+                    </p>  */}
+                  
+
+             
             </div>
 
             <button
@@ -357,10 +397,8 @@ function FooterButtons({ checked, check, next, lastScore }) {
       {!checked ? (
         <button
           onClick={check}
-          className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
-        >
-          Check
-        </button>
+          className="px-4 py-2 rounded-lg bg-orange-900 text-white hover:bg-orange-700 transition">Check</button>
+
       ) : (
         <button
           onClick={next}

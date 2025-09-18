@@ -134,9 +134,8 @@ export default function Present({ onRoundScore }) {
 
       <div className="flex items-center gap-3 mt-6">
         {!checked ? (
-          <button onClick={check} className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition">
-            Check
-          </button>
+          <button onClick={check} className="px-4 py-2 rounded-lg bg-orange-900 text-white hover:bg-orange-700 transition">Check</button>
+          
         ) : (
           <button onClick={next} className="px-4 py-2 rounded-lg bg-gray-900 text-white hover:bg-gray-800 transition">
             Next verb
