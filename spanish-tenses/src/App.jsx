@@ -5,6 +5,7 @@ import Present from "./pages/Present";
 import Past from "./pages/Past";
 import Future from "./pages/Future";
 import { load, save } from "./utils/storage";
+import Home from './pages/Home';
 
 const linkBase = "px-3 py-2 rounded-lg text-sm font-medium transition";
 const linkClass = ({ isActive }) =>
@@ -49,7 +50,7 @@ export default function App() {
       : "";
 
   return (
-    <main className="min-h-screen relative bg-orange-50">
+    <main className="min-h-screen">
       <div className="pointer-events-none abolsute inset-0 bg-animate opacity-70" />
       <header className="border-b bg-white">
         <div className="max-w-3xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -83,21 +84,25 @@ export default function App() {
         </div>
       </header>
 
-      <div className="max-w-3xl mx-auto px-4 py-6">
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <p className="text-sm text-gray-600">
-                Choose a tense above to practice.
-              </p>
-            }
-          />
-          <Route path="/present" element={<Present onRoundScore={handleRoundScore} />} />
-          <Route path="/past" element={<Past onRoundScore={handleRoundScore} />} />
-          <Route path="/future" element={<Future onRoundScore={handleRoundScore} />} />
-        </Routes>
-      </div>
+      <div className="max-w-4xl mx-auto px-4 py-6">
+  <Routes>
+    <Route path="/" element={<Home />} />   {/* <-- new Home page */}
+    <Route
+      path="/present"
+      element={<Present onRoundScore={handleRoundScore} />}
+    />
+    <Route
+      path="/past"
+      element={<Past onRoundScore={handleRoundScore} />}
+    />
+    <Route
+      path="/future"
+      element={<Future onRoundScore={handleRoundScore} />}
+    />
+  </Routes>
+</div>
+
+
     </main>
   );
 }
