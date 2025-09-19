@@ -1,13 +1,14 @@
 // src/pages/Future.jsx
 import { useMemo, useRef, useState } from "react";
 import AccentPad from "../components/AccentPad";
+import confetti from "canvas-confetti";
 
 /* ---------- Tabs (categories) ---------- */
 const MODES = [
   { key: "simple", label: "Simple" },
   { key: "ir-a", label: "Ir a + infinitivo" },
-  { key: "condicional", label: "Condicional" },
   { key: "compuesto", label: "Futuro compuesto" },
+  { key: "condicional", label: "Condicional" },
 ];
 
 /* ---------- Futuro simple data ---------- */
@@ -64,6 +65,25 @@ function conjugateIrA(verb) {
   return out;
 }
 
+/* ----- FUTURO COMPUESTO ------*/
+
+const FUTURO_COMPUESTO_VERBS = [
+  { infinitive: "estudiar", participle: "estudiado" },
+  { infinitive: "comer",    participle: "comido"    },
+  { infinitive: "vivir",    participle: "vivido"    },
+  { infinitive: "hacer",    participle: "hecho"     },
+  { infinitive: "decir",    participle: "dicho"     },
+  { infinitive: "poner",    participle: "puesto"    },
+];
+
+function conjugateFuturoCompuesto(verb) {
+  const haber = ["habré", "habrás", "habrá", "habremos", "habréis", "habrán"];
+  const keys  = ["yo", "tú", "él", "nos", "vos", "ellos"];
+  const out = {};
+  keys.forEach((k, i) => (out[k] = `${haber[i]} ${verb.participle}`));
+  return out;
+}
+
 /* ---------- Shared ---------- */
 const PERSONS = [
   { key: "yo", label: "yo" },
@@ -74,10 +94,16 @@ const PERSONS = [
   { key: "ellos", label: "ellos/ellas/ustedes" },
 ];
 
+function winConfetti() {
+  const base = {sprad: 70, startVelocity: 40, gravity: 0.9, origin: {y: 0.2}};
+  confetti({ ...base, particleCount: 80});
+  setTimeout(() => confetti({ ...base, particleCount: 120, scalar: 0.9}), 160);
+}
+
 const rndNext = (max, avoid) =>
   max <= 1 ? 0 : ((avoid + 1 + Math.floor(Math.random() * (max - 1))) % max);
 
-export default function Future({ onRoundScore }) {
+export  default function Future({ onRoundScore }) {
   const [mode, setMode] = useState("simple");
   const [filter, setFilter] = useState("all"); // simple-only: all | regular | irregular
   const [showRules, setShowRules] = useState(false)
@@ -106,18 +132,24 @@ export default function Future({ onRoundScore }) {
   }, [filter]);
 
   const irAPool = IR_A_VERBS;
+  const compuestoPool = FUTURO_COMPUESTO_VERBS;
 
   const item = useMemo(() => {
-    if (mode === "simple") {
-      const v = simplePool[idx % simplePool.length];
-      return v ? { verb: v.infinitive, forms: conjugateFutureSimple(v) } : null;
-    }
-    if (mode === "ir-a") {
-      const v = irAPool[idx % irAPool.length];
-      return v ? { verb: v.infinitive, forms: conjugateIrA(v) } : null;
-    }
-    return null;
-  }, [mode, idx, simplePool, irAPool]);
+  if (mode === "simple") {
+    const v = simplePool[idx % simplePool.length];
+    return v ? { verb: v.infinitive, forms: conjugateFutureSimple(v) } : null;
+  }
+  if (mode === "ir-a") {
+    const v = irAPool[idx % irAPool.length];
+    return v ? { verb: v.infinitive, forms: conjugateIrA(v) } : null;
+  }
+  if (mode === "compuesto") {
+    const v = compuestoPool[idx % compuestoPool.length];
+    return v ? { verb: v.infinitive, forms: conjugateFuturoCompuesto(v) } : null;
+  }
+  return null;
+}, [mode, idx, simplePool, irAPool, compuestoPool]);
+
 
   /* ----- actions ----- */
   function setAnswer(k, v) {
@@ -134,13 +166,16 @@ export default function Future({ onRoundScore }) {
     setLastScore(`${correct}/${PERSONS.length}`);
     setChecked(true);
     onRoundScore?.(correct, PERSONS.length);
+    if (mode === PERSONS.length) winConfetti();
   }
 
   function next() {
     setAnswers({});
     setChecked(false);
     setLastScore(null);
-    const len = mode === "simple" ? simplePool.length : irAPool.length;
+    const len = mode === "simple" ? simplePool.length:
+      mode === "ir-a" ? irAPool.length:
+      mode === "compuesto" ? compuestoPool.length: 0;
     setIdx((i) => rndNext(len, i));
   }
 
@@ -298,13 +333,6 @@ export default function Future({ onRoundScore }) {
                   </div>
                 )}
               </div>
-                    {/* <p className="mt-1 text-xs text-gray-500">
-                      <strong>Rule:</strong><em>voy/vas/va/vamos/vais/van</em> + <code>a</code> + infinitive
-                      (e.g., <em>voy a estudiar</em>).
-                    </p>  */}
-                  
-
-             
             </div>
 
             <button
@@ -336,18 +364,67 @@ export default function Future({ onRoundScore }) {
       )}
 
       {/* Placeholders for the other tabs */}
+      {mode === "compuesto" && (
+        <>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h2 className="text-2xl font-semibold">Futuro - Compuesto</h2>
+            {item && (
+              <p className="mt-1 text-gray-700">
+                Verb: <span className="font-medium">{item.verb}</span>
+              </p>
+            )}
+
+            <div className="mt-2">
+              <button
+                onClick={() => setShowRules((s) => !s)}
+                className="px-3 py-1 rounded bg-orane-100 text-orange-800 hover:bg-orange-300 text-xs">
+                  {showRules ? "Hide rules" : "Show rules"}
+                </button>
+                {showRules && (
+                  <div className="mt-2 p-3 rounded border bg-orange-50 text-xs leading-relaxed">
+                    <p><strong>Rules:</strong> <em>haber</em> (futuro)
+                    {" "}→ <code>habré, habrás, habrá, habremos, habréis, habrán</code>
+                    {" "}+ participio (<em>hecho, dicho, puesto, estudiado…</em>)
+                  </p>
+                  <p className="mt-1">Example: <em>Habré terminado</em>.</p>
+                  </div>
+                )}
+            </div>
+          </div>
+          <button
+            onClick={() => setShowAccents((s) => !s)}
+            className="h-9 px-3 rounded-lg border bg-white hover:bg-gray-100 text-sm whitespace-nowrap">
+              {showAccents ? "Hide accents" : "Show accents"}
+            </button>
+        </div>
+        {showAccents && <AccentPad onInsert={insertChar} />}
+        
+        <DrillGrid
+          item={item}
+          answers={answers}
+          setAnswer={setAnswer}
+          checked={checked}
+          inputRefs={inputRefs}
+          setFocusedKey={setFocusedKey}
+        />
+
+        <FooterButtons
+          checked={checked}
+          check={check}
+          next={next}
+          lastScore={lastScore}
+        />
+        </>
+      )}
+
       {mode === "condicional" && (
         <ComingSoon
           title="Condicional simple"
           text="Infinitive + ía, ías, ía, íamos, íais, ían; irregular stems like tendr-, dir-, har-, querr-, podr-…"
         />
       )}
-      {mode === "compuesto" && (
-        <ComingSoon
-          title="Futuro compuesto"
-          text="Futuro de ‘haber’ + participio (e.g., habré terminado)."
-        />
-      )}
+      
     </section>
   );
 }
