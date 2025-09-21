@@ -247,10 +247,10 @@ export  default function Future({ onRoundScore }) {
                 {showRules && (
                   <div className="mt-2 p-3 rounded border bg-orange-50 text-xs leading-relaxed">
                     <p>
-                      <strong>Rule:</strong> <code>infinitive</code> + <em>é, ás, á, emos, éis, án</em>.
+                      <strong>Rule:</strong> <code>infinitive</code> + <em>endings</em>
                     </p>
                     <p className="mt-1">
-                      Irregulars use special stems (<em>tendr-, dir-, sabr-, …</em>).
+                      Irregulars use special stems 
                     </p>
                   </div>
                 )}
@@ -383,8 +383,8 @@ export  default function Future({ onRoundScore }) {
                 </button>
                 {showRules && (
                   <div className="mt-2 p-3 rounded border bg-orange-50 text-xs leading-relaxed">
-                    <p><strong>Rules:</strong> <em>haber</em> (futuro)
-                    {" "}→ <code>habré, habrás, habrá, habremos, habréis, habrán</code>
+                    <p><strong>Rules:</strong> <em>haber</em> (futuro simple)
+                    {/* {" "}→ <code>habré, habrás, habrá, habremos, habréis, habrán</code> */}
                     {" "}+ participio 
                   </p>
                   <p className="mt-1">Example: <em>Habré terminado</em>.</p>
@@ -421,7 +421,7 @@ export  default function Future({ onRoundScore }) {
       {mode === "condicional" && (
         <ComingSoon
           title="Condicional simple"
-          text="Infinitive + ía, ías, ía, íamos, íais, ían; irregular stems like tendr-, dir-, har-, querr-, podr-…"
+          text="Infinitive + endings ía, ías, ía, íamos, íais, ían; irregular stems like tendr-, dir-, har-, querr-, podr-…"
         />
       )}
       
