@@ -385,7 +385,7 @@ export  default function Future({ onRoundScore }) {
                   <div className="mt-2 p-3 rounded border bg-orange-50 text-xs leading-relaxed">
                     <p><strong>Rules:</strong> <em>haber</em> (futuro)
                     {" "}→ <code>habré, habrás, habrá, habremos, habréis, habrán</code>
-                    {" "}+ participio (<em>hecho, dicho, puesto, estudiado…</em>)
+                    {" "}+ participio 
                   </p>
                   <p className="mt-1">Example: <em>Habré terminado</em>.</p>
                   </div>
