@@ -3,6 +3,10 @@ import AccentPad from "../components/AccentPad";
 import { busrtConfetti } from "../utils/celebrate";
 
 const VERBS = [
+  { infinitive: "llamarse", type: "irregular", irregular: {
+      present: { yo:"me llamo", tú:"te llamas", él:"se llama", nos:"nos llamamos", vos:"os llamáis", ellos:"se llaman" }
+    }
+  },
   { infinitive: "hablar", type: "ar" },
   { infinitive: "comer",  type: "er" },
   { infinitive: "vivir",  type: "ir" },
